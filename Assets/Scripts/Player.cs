@@ -5,17 +5,41 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private SpawnManager _spawnManager;
+    private GameManager _gameManager;
 
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private GameObject _shieldVisual;
+    [SerializeField]
+    private GameObject _tripleShotPrefab;
     [SerializeField]
     private float _speed = 5f;
     [SerializeField]
     private float _fireRate = 0.15f;
     private float _canFire = -1f;
-    [SerializeField]
-    private int _lives = 3;
 
+    [SerializeField]
+    public int _lives = 3;
+    [SerializeField]
+    private float _speedBoostMultiplier = 2f;
+
+    private bool _isTripleShot = false;
+    private bool _isShield = false;
+
+    [SerializeField]
+    private GameObject _rightEngineFire;
+    [SerializeField]
+    private GameObject _leftEngineFire;
+
+    [SerializeField]
+    private AudioSource _laserAudio;
+    [SerializeField]
+    private AudioSource _explosionAudio;
+    [SerializeField]
+    private GameObject _explosion;
+
+    private UIManager _uiManager;
     void Start()
     {
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -24,6 +48,17 @@ public class Player : MonoBehaviour
             Debug.LogError("The spawn manager is null");
         }
 
+        _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("The Game manager is null");
+        }
+
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UI manager is null");
+        }
 
         transform.position = new Vector3(0, -2f, 0);
     }
@@ -36,7 +71,6 @@ public class Player : MonoBehaviour
         {
             FireLaser();
         }
-
     }
 
 
@@ -48,6 +82,8 @@ public class Player : MonoBehaviour
 
         Vector3 dir = new Vector3(horizontalInput, verticalInput);
         transform.Translate(dir * Time.deltaTime * _speed);
+
+        //transform.Translate(Vector3.left * 5 * Time.deltaTime);
 
         //for y:
         if (transform.position.y >= 0f)
@@ -62,13 +98,13 @@ public class Player : MonoBehaviour
         //transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.8f, 0), 0);
 
         //for x:
-        if (transform.position.x >= 11.5f)
+        if (transform.position.x >= 6.5f)
         {
-            transform.position = new Vector3(-11.5f, transform.position.y, transform.position.z);
+            transform.position = new Vector3(-6.5f, transform.position.y, transform.position.z);
         }
-        else if (transform.position.x <= -11.5f)
+        else if (transform.position.x <= -6.5f)
         {
-            transform.position = new Vector3(11.5f, transform.position.y, transform.position.z);
+            transform.position = new Vector3(6.5f, transform.position.y, transform.position.z);
         }
     }
 
@@ -77,16 +113,110 @@ public class Player : MonoBehaviour
         _canFire = Time.time + _fireRate;
         Instantiate(_laserPrefab, new Vector3(this.transform.position.x, this.transform.position.y + 1.05f), Quaternion.identity);
 
+        if(_isTripleShot == true)
+        {
+            Instantiate(_tripleShotPrefab, new Vector3(this.transform.position.x, this.transform.position.y), Quaternion.identity);
+        }
+
+        _laserAudio.Play();
+    }
+
+    public void PowerupActive(int powerupID)
+    {
+        
+        switch (powerupID)
+        {
+            case 0:
+                _isTripleShot = true;
+                break;
+            case 1:
+                _speed *= _speedBoostMultiplier;
+                break;
+            case 2:
+                _isShield = true;
+                _shieldVisual.SetActive(true);
+                break;
+            default:
+                Debug.Log("No powerup");
+                break;
+        }       
+
+        StartCoroutine(PowerupCooldown(powerupID));           
+    }
+
+    public IEnumerator PowerupCooldown(int powerupID)
+    {
+        float waitTime = 0f;
+
+        if(powerupID == 0)
+        {
+            waitTime = 5f;
+        }
+        else if(powerupID == 1)
+        {
+            waitTime = 3f;
+        }
+
+        yield return new WaitForSeconds(waitTime);
+
+        switch (powerupID)
+        {
+            case 0:
+                _isTripleShot = false;
+                break;
+            case 1:
+                _speed /= _speedBoostMultiplier;
+                break;
+        }
+        
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Laser")
+        {
+            if (other.GetComponent<Laser>().enemyLaser == false) return;
+            Destroy(other.gameObject);
+
+            GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            Destroy(explosion, 3f);
+            _explosionAudio.Play();
+
+            Damage();
+            _uiManager.ChangeLives(_lives);
+        }
     }
 
     public void Damage()
     {
-        _lives -= 1;
+        if(_isShield == false)
+        {
+            _lives -= 1;
+        }
+        else if(_isShield == true)
+        {
+            _shieldVisual.SetActive(false);
+            _isShield = false;         
+        }
+        
 
+        if(_lives == 2)
+        {
+            _rightEngineFire.SetActive(true);
+        }
+        else if(_lives == 1)
+        {
+            _leftEngineFire.SetActive(true);
+        }
+        else 
         if(_lives < 1)
         {
             _spawnManager.OnPlayerDeath();
+            _gameManager.GameOver();
+            _explosionAudio.Play();
             Destroy(this.gameObject);
         }
     }
+
 }
