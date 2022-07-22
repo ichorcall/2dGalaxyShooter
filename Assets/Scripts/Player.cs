@@ -13,14 +13,16 @@ public class Player : MonoBehaviour
     private GameObject _shieldVisual;
     [SerializeField]
     private GameObject _tripleShotPrefab;
-    [SerializeField]
-    private float _speed = 5f;
+    
     [SerializeField]
     private float _fireRate = 0.15f;
     private float _canFire = -1f;
 
     [SerializeField]
     public int _lives = 3;
+
+    [SerializeField]
+    private float _speed = 5f;
     [SerializeField]
     private float _speedBoostMultiplier = 2f;
 
@@ -39,7 +41,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _explosion;
 
+    [SerializeField]
+    private GameObject _thruster;
+    private Color _thrusterCol;
+
     private UIManager _uiManager;
+
+    private bool _speedUp = false;
+
     void Start()
     {
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -61,6 +70,8 @@ public class Player : MonoBehaviour
         }
 
         transform.position = new Vector3(0, -2f, 0);
+
+        _thrusterCol = _thruster.GetComponent<SpriteRenderer>().color;
     }
 
     void Update()
@@ -83,8 +94,6 @@ public class Player : MonoBehaviour
         Vector3 dir = new Vector3(horizontalInput, verticalInput);
         transform.Translate(dir * Time.deltaTime * _speed);
 
-        //transform.Translate(Vector3.left * 5 * Time.deltaTime);
-
         //for y:
         if (transform.position.y >= 0f)
         {
@@ -106,6 +115,35 @@ public class Player : MonoBehaviour
         {
             transform.position = new Vector3(6.5f, transform.position.y, transform.position.z);
         }
+
+
+        //increasing our speed with left shift
+        if(Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _speedUp = true;
+            _speed *= _speedBoostMultiplier;                      
+        }
+        else if(Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _speedUp = false;
+            _speed /= _speedBoostMultiplier;         
+        }
+
+        ChangeThruster();
+    }
+
+    void ChangeThruster()
+    {
+        if(_speedUp == true)
+        {
+            _thrusterCol.a = Mathf.Lerp(_thrusterCol.a, 1f, .1f);
+        }
+        else if(_speedUp == false)
+        {
+            _thrusterCol.a = Mathf.Lerp(_thrusterCol.a, .5f, .1f);
+        }
+
+        _thruster.GetComponent<SpriteRenderer>().color = _thrusterCol;
     }
 
     void FireLaser()

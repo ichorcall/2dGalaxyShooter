@@ -706,6 +706,7 @@ MonoBehaviour:
   _explosionAudio: {fileID: 1622802156}
   _explosion: {fileID: 1756978831533163440, guid: c5f2dc847a456f84081d111dd0d03647,
     type: 3}
+  _thruster: {fileID: 1879383384}
 --- !u!212 &635197169
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1939,7 +1940,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: a45d21c30e0154a9ca1a5d6fb2bf3cfa, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
