@@ -12,6 +12,8 @@ public class PowerUp : MonoBehaviour
     //0 tripleshot
     //1 speed
     //2 shield
+    //3 ammo
+    //4 hp
     [SerializeField]
     private AudioSource _powerupAudio;
 

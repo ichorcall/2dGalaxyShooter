@@ -101,7 +101,7 @@ public class Enemy : MonoBehaviour
             
             if(player != null)
             {
-                player.Damage();
+                player.Damage(false);
                 _uiManager.ChangeLives(player._lives);
             }
 

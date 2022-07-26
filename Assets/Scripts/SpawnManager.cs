@@ -9,11 +9,14 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     private GameObject[] _powerUps;
+    [SerializeField]
+    private GameObject[] _collectables;
 
     [SerializeField]
     private float _spawnTime = 4f;
     private bool _spawnEnemy = true;
     private bool _spawnPowerup = true;
+    private bool _spawnCollectable = true;
 
     [SerializeField]
     private GameObject _enemyContainer;
@@ -22,7 +25,7 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(SpawnPowerupRoutine());
         StartCoroutine(SpawnEnemyRoutine());
-        
+        StartCoroutine(SpawnCollectablesRoutine());
     }
 
     public IEnumerator SpawnEnemyRoutine()
@@ -52,10 +55,22 @@ public class SpawnManager : MonoBehaviour
 
             float randomTime = Random.Range(3, 8);
             yield return new WaitForSeconds(randomTime);
+        }    
+    }
 
+    public IEnumerator SpawnCollectablesRoutine()
+    {
+        yield return new WaitForSeconds(2f);
 
+        while (_spawnCollectable == true)
+        {
+            float randomPosX = Random.Range(-5f, 6f);
+            int randomCollectable = Random.Range(0, _collectables.Length);
+            GameObject powerup = Instantiate(_collectables[randomCollectable], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+
+            float randomTime = Random.Range(3, 8);
+            yield return new WaitForSeconds(randomTime);
         }
-       
     }
 
     private GameObject[] leftOverPowerups;
@@ -66,8 +81,8 @@ public class SpawnManager : MonoBehaviour
     {
         _spawnPowerup = false;
         _spawnEnemy = false;
+        _spawnCollectable = false;
         
-
         leftOverPowerups = GameObject.FindGameObjectsWithTag("Powerup");
         leftOverEnemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject p in leftOverPowerups)

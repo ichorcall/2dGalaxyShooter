@@ -10,8 +10,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _laserPrefab;
     [SerializeField]
-    private GameObject _shieldVisual;
-    [SerializeField]
     private GameObject _tripleShotPrefab;
     
     [SerializeField]
@@ -45,9 +43,16 @@ public class Player : MonoBehaviour
     private GameObject _thruster;
     private Color _thrusterCol;
 
+
     private UIManager _uiManager;
 
     private bool _speedUp = false;
+
+    [SerializeField]
+    private GameObject[] _shieldVisuals;
+    private int _shieldHP;
+
+    private int _ammoCount = 15;
 
     void Start()
     {
@@ -72,6 +77,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, -2f, 0);
 
         _thrusterCol = _thruster.GetComponent<SpriteRenderer>().color;
+
     }
 
     void Update()
@@ -82,6 +88,8 @@ public class Player : MonoBehaviour
         {
             FireLaser();
         }
+
+        
     }
 
 
@@ -147,7 +155,11 @@ public class Player : MonoBehaviour
     }
 
     void FireLaser()
-    {
+    {       
+        if (_ammoCount <= 0) return;
+        _ammoCount -= 1;
+        _uiManager.ChangeAmmoCount(_ammoCount);
+
         _canFire = Time.time + _fireRate;
         Instantiate(_laserPrefab, new Vector3(this.transform.position.x, this.transform.position.y + 1.05f), Quaternion.identity);
 
@@ -160,8 +172,7 @@ public class Player : MonoBehaviour
     }
 
     public void PowerupActive(int powerupID)
-    {
-        
+    {   
         switch (powerupID)
         {
             case 0:
@@ -170,9 +181,26 @@ public class Player : MonoBehaviour
             case 1:
                 _speed *= _speedBoostMultiplier;
                 break;
-            case 2:
+            case 2:              
                 _isShield = true;
-                _shieldVisual.SetActive(true);
+                _shieldHP = 3;
+                foreach(GameObject s in _shieldVisuals)
+                {
+                    s.SetActive(true);
+                }
+                break;
+            case 3:            
+                _ammoCount += 10;
+                _uiManager.ChangeAmmoCount(_ammoCount);              
+                break;
+            case 4:
+                if(_lives < 3)
+                {
+                    _lives += 1;
+                    _uiManager.ChangeLives(_lives);
+                    StartCoroutine(ChangeColors());
+                    Damage(true);
+                }
                 break;
             default:
                 Debug.Log("No powerup");
@@ -180,6 +208,28 @@ public class Player : MonoBehaviour
         }       
 
         StartCoroutine(PowerupCooldown(powerupID));           
+    }
+
+    public IEnumerator ChangeColors()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            yield return new WaitForSeconds(.15f);
+            GetComponent<SpriteRenderer>().color = Color.green;
+            yield return new WaitForSeconds(.15f);
+            GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
+
+    public void ShieldDamage()
+    {
+        _shieldHP -= 1;
+        _shieldVisuals[_shieldHP].SetActive(false);
+
+        if(_shieldHP == 0)
+        {
+            _isShield = false;
+        }
     }
 
     public IEnumerator PowerupCooldown(int powerupID)
@@ -221,30 +271,38 @@ public class Player : MonoBehaviour
             Destroy(explosion, 3f);
             _explosionAudio.Play();
 
-            Damage();
+            Damage(false);
             _uiManager.ChangeLives(_lives);
         }
     }
 
-    public void Damage()
+    public void Damage(bool heal)
     {
-        if(_isShield == false)
+        if(heal == false)
         {
-            _lives -= 1;
-        }
-        else if(_isShield == true)
-        {
-            _shieldVisual.SetActive(false);
-            _isShield = false;         
+            if (_isShield == false)
+            {
+                _lives -= 1;
+            }
+            else if (_isShield == true)
+            {
+                ShieldDamage();
+            }
         }
         
-
-        if(_lives == 2)
+        if(_lives == 3)
+        {
+            _rightEngineFire.SetActive(false);
+            _leftEngineFire.SetActive(false);
+        }
+        else if(_lives == 2)
         {
             _rightEngineFire.SetActive(true);
+            _leftEngineFire.SetActive(false);
         }
         else if(_lives == 1)
         {
+            _rightEngineFire.SetActive(true);
             _leftEngineFire.SetActive(true);
         }
         else 
