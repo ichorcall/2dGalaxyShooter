@@ -23,10 +23,32 @@ public class UIManager : MonoBehaviour
     private Text _ammoCountText;
     private bool _noAmmo = false;
 
+    [SerializeField]
+    private Image _energyBar;
+
+
     void Start()
     {
         _livesIMG.sprite = _spriteLives[3];
         _scoreText.text = "Score: 0";        
+    }
+
+    public void ChangeEnergyBar(float currentEnergy, float maxEnergy)
+    {
+        _energyBar.fillAmount = currentEnergy /= maxEnergy;
+
+        if (_energyBar.fillAmount >= .75f)
+        {
+            _energyBar.color = Color.green;
+        }
+        else if(_energyBar.fillAmount < .75f && _energyBar.fillAmount >= .35f) 
+        {
+            _energyBar.color = Color.yellow;
+        }
+        else if (_energyBar.fillAmount < .35f && _energyBar.fillAmount >= 0) 
+        {
+            _energyBar.color = Color.red;
+        }
     }
 
     public void ChangeLives(int currentLives)

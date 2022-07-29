@@ -14,6 +14,7 @@ public class PowerUp : MonoBehaviour
     //2 shield
     //3 ammo
     //4 hp
+    //5 homing
     [SerializeField]
     private AudioSource _powerupAudio;
 

@@ -21,6 +21,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject _enemyContainer;
 
+    [SerializeField]
+    private GameObject _homingLaserPowerup;
     public void StartSpawning()
     {
         StartCoroutine(SpawnPowerupRoutine());
@@ -50,8 +52,18 @@ public class SpawnManager : MonoBehaviour
         while (_spawnPowerup == true)
         {
             float randomPosX = Random.Range(-5f, 6f);
-            int randomPowerup = Random.Range(0, _powerUps.Length);
-            GameObject powerup = Instantiate(_powerUps[randomPowerup], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+
+            //random chance for homing:
+            int rarePowerupChance = Random.Range(0, 10);
+            if(rarePowerupChance >= 0 && rarePowerupChance < 3)
+            {
+                GameObject homingLaser = Instantiate(_homingLaserPowerup, new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }
+            else
+            {
+                int randomPowerup = Random.Range(0, _powerUps.Length);
+                GameObject powerup = Instantiate(_powerUps[randomPowerup], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }
 
             float randomTime = Random.Range(3, 8);
             yield return new WaitForSeconds(randomTime);

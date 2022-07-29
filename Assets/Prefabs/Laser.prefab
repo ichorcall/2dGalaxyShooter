@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 8
+  enemyLaser: 0
 --- !u!212 &8421287162445742379
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -87,7 +88,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b030d335857201646be69703e678d6e5, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.72622323, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.40163708, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
