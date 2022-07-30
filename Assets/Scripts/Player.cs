@@ -376,16 +376,20 @@ public class Player : MonoBehaviour
         if (other.gameObject.tag == "Laser")
         {
             if (other.GetComponent<Laser>().enemyLaser == false) return;
-            Destroy(other.gameObject);
+
+            _uiManager.ChangeLives(_lives);
 
             GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
             Destroy(explosion, 3f);
             _explosionAudio.Play();
 
             Damage(false);
-            _uiManager.ChangeLives(_lives);
+
+            Destroy(other.gameObject);
         }
     }
+
+
 
     public void Damage(bool heal)
     {
@@ -394,6 +398,7 @@ public class Player : MonoBehaviour
             if (_isShield == false)
             {
                 _lives -= 1;
+                Camera.main.GetComponent<Animator>().Play("CameraShake");
             }
             else if (_isShield == true)
             {
@@ -416,12 +421,12 @@ public class Player : MonoBehaviour
             _rightEngineFire.SetActive(true);
             _leftEngineFire.SetActive(true);
         }
-        else 
-        if(_lives < 1)
+        else if(_lives <= 0)
         {
             _spawnManager.OnPlayerDeath();
             _gameManager.GameOver();
             _explosionAudio.Play();
+            Camera.main.GetComponent<Animator>().Play("CameraShake");
             Destroy(this.gameObject);
         }
     }

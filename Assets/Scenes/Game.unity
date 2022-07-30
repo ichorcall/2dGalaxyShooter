@@ -895,8 +895,8 @@ MonoBehaviour:
   - {fileID: 135577937}
   _homingLaserPrefab: {fileID: 687542320094283709, guid: 37de79d759f1604428e8d729cde77fbf,
     type: 3}
+  _maxEnergy: 250
   _energyAmount: 250
-  _rechargeEnergy: 1
 --- !u!212 &635197169
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1190,7 +1190,7 @@ Transform:
   m_GameObject: {fileID: 795908648}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.058, y: 0.92, z: 0}
-  m_LocalScale: {x: 0.5754204, y: 1.0728077, z: 0.63207364}
+  m_LocalScale: {x: 0.7, y: 1.1, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -1907,6 +1907,7 @@ GameObject:
   - component: {fileID: 1589984322}
   - component: {fileID: 1589984321}
   - component: {fileID: 1589984324}
+  - component: {fileID: 1589984325}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2039,6 +2040,25 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!95 &1589984325
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589984320}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 381cedbeb07c63d40862f428960cbcd3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1622802154
 GameObject:
   m_ObjectHideFlags: 0
