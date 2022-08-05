@@ -317,7 +317,7 @@ public class Player : MonoBehaviour
                     _lives += 1;
                     _uiManager.ChangeLives(_lives);
                     StartCoroutine(ChangeColors());
-                    Damage(true);
+                    Damage(false);
                 }
                 break;
             case 5:
@@ -393,7 +393,7 @@ public class Player : MonoBehaviour
             Destroy(explosion, 3f);
             _explosionAudio.Play();
 
-            Damage(false);
+            Damage(true);
 
             Destroy(other.gameObject);
         }
@@ -401,9 +401,9 @@ public class Player : MonoBehaviour
 
 
 
-    public void Damage(bool heal)
+    public void Damage(bool damage)
     {
-        if(heal == false)
+        if(damage == true)
         {
             if (_isShield == false)
             {
@@ -415,8 +415,10 @@ public class Player : MonoBehaviour
                 ShieldDamage();
             }
         }
-        
-        if(_lives == 3)
+
+        _uiManager.ChangeLives(_lives);
+
+        if (_lives == 3)
         {
             _rightEngineFire.SetActive(false);
             _leftEngineFire.SetActive(false);

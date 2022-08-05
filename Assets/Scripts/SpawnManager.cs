@@ -12,8 +12,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _collectables;
 
-    [SerializeField]
-    private float _spawnTime = 4f;
+    
     private bool _spawnEnemy = true;
     private bool _spawnPowerup = true;
     private bool _spawnCollectable = true;
@@ -23,11 +22,42 @@ public class SpawnManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _homingLaserPowerup;
+
+    private UIManager _uiManager;
+
+    [SerializeField]
+    private float _spawnTime = 4f;
+    [SerializeField]
+    private int _waveNumber = 1;
+    private bool _startWave = true;
+
+    public void Start()
+    {
+
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        if (_uiManager == null)
+        {
+            Debug.LogError("UI manager is null");
+        }
+    }
     public void StartSpawning()
     {
         StartCoroutine(SpawnPowerupRoutine());
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnCollectablesRoutine());
+        StartCoroutine(EnemyWave());
+        _uiManager.ChangeWaveCount(_waveNumber);
+    }
+
+    public IEnumerator EnemyWave()
+    {
+        while(_startWave == true)
+        {
+            yield return new WaitForSeconds(10f);
+            _spawnTime /= 1.2f;
+            _waveNumber += 1;
+            _uiManager.ChangeWaveCount(_waveNumber);
+        }
     }
 
     public IEnumerator SpawnEnemyRoutine()

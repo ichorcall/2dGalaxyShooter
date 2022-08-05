@@ -26,11 +26,15 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Image _energyBar;
 
+    [SerializeField]
+    private Text _waveCountText;
+    private IEnumerator _flashWave;
 
     void Start()
     {
         _livesIMG.sprite = _spriteLives[3];
-        _scoreText.text = "Score: 0";        
+        _scoreText.text = "Score: 0";
+        _waveCountText.enabled = false;
     }
 
     public void ChangeEnergyBar(float currentEnergy, float maxEnergy)
@@ -77,6 +81,33 @@ public class UIManager : MonoBehaviour
             _noAmmo = false;
             _ammoCountText.GetComponent<Text>().color = Color.white;
         }
+    }
+
+    public void ChangeWaveCount(int waveNumber)
+    {
+        _waveCountText.text = "WAVE " + waveNumber;
+        _waveCountText.enabled = true;
+
+        if(_flashWave != null)
+        {
+            StopCoroutine(_flashWave);
+        }
+
+        _flashWave = FlashWave();
+        StartCoroutine(_flashWave);
+    }
+
+    IEnumerator FlashWave()
+    {
+        for(int i =0; i< 3; i++)
+        {
+            yield return new WaitForSeconds(.5f);
+            _waveCountText.enabled = false;
+            yield return new WaitForSeconds(.5f);
+            _waveCountText.enabled = true;
+        }
+
+        _waveCountText.enabled = false;
     }
 
     IEnumerator NoAmmo()

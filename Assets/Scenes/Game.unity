@@ -813,6 +813,7 @@ RectTransform:
   - {fileID: 173759474}
   - {fileID: 688370282}
   - {fileID: 889597918}
+  - {fileID: 970680242}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -843,6 +844,7 @@ MonoBehaviour:
   _livesIMG: {fileID: 1252644931}
   _ammoCountText: {fileID: 173759475}
   _energyBar: {fileID: 688370283}
+  _waveCountText: {fileID: 970680243}
 --- !u!1 &635197167
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,6 +1348,83 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958366356}
+  m_CullTransparentMesh: 0
+--- !u!1 &970680241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 970680242}
+  - component: {fileID: 970680244}
+  - component: {fileID: 970680243}
+  m_Layer: 5
+  m_Name: WaveCount
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &970680242
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970680241}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 576735665}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -400, y: -200}
+  m_SizeDelta: {x: 300, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &970680243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970680241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 50
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 50
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: WAVE 100
+--- !u!222 &970680244
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970680241}
   m_CullTransparentMesh: 0
 --- !u!1 &1030263419
 GameObject:
@@ -2584,10 +2663,11 @@ MonoBehaviour:
   _collectables:
   - {fileID: 3862103948743027071, guid: 3d753e14f4bb83b4f84eff0d8f3b26a2, type: 3}
   - {fileID: 3574141642377378610, guid: 545667718176ebb43b433423fd68dbd6, type: 3}
-  _spawnTime: 4
   _enemyContainer: {fileID: 1630856558}
   _homingLaserPowerup: {fileID: 2025759189555182615, guid: 5fb76a0ff0a47914da6ded88cef37bfe,
     type: 3}
+  _spawnTime: 4
+  _waveNumber: 1
 --- !u!1 &2100142463
 GameObject:
   m_ObjectHideFlags: 0
