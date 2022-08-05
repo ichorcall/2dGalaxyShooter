@@ -40,6 +40,41 @@ public class Player : MonoBehaviour
     private GameObject _explosion;
 
     private UIManager _uiManager;
+<<<<<<< Updated upstream
+=======
+
+    private bool _speedUp = false;
+
+    [SerializeField]
+    private GameObject[] _shieldVisuals;
+    private int _shieldHP;
+
+    [SerializeField]
+    private int _maxAmmoCount = 50;
+    [SerializeField]
+    private int _ammoCount = 15;
+
+    private bool _homingLaser = false;
+    [SerializeField]
+    private GameObject _homingLaserPrefab;
+
+    [SerializeField]
+    private float _maxEnergy = 250f;
+    [SerializeField]
+    private float _energyAmount = 250f;
+    private bool _multiplySpeed = true;
+    private IEnumerator rechargingRoutine;
+    private bool _noEnergy = false;
+    private bool _rechargeEnergy = true;
+
+    private float _fireRateMultiplier = 2f;
+    [SerializeField]
+    private GameObject _bugParticles;
+
+    private bool _inLaser = false;
+    private IEnumerator _inLaserRoutine;
+
+>>>>>>> Stashed changes
     void Start()
     {
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -63,6 +98,8 @@ public class Player : MonoBehaviour
         transform.position = new Vector3(0, -2f, 0);
     }
 
+    private bool _invincible = false;
+
     void Update()
     {
         CalculateMovement();
@@ -71,6 +108,17 @@ public class Player : MonoBehaviour
         {
             FireLaser();
         }
+<<<<<<< Updated upstream
+=======
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            _homingLaser = true;
+            _invincible = true;
+        }
+
+        Thrusters();
+>>>>>>> Stashed changes
     }
 
 
@@ -109,11 +157,33 @@ public class Player : MonoBehaviour
     }
 
     void FireLaser()
+<<<<<<< Updated upstream
     {
         _canFire = Time.time + _fireRate;
         Instantiate(_laserPrefab, new Vector3(this.transform.position.x, this.transform.position.y + 1.05f), Quaternion.identity);
 
         if(_isTripleShot == true)
+=======
+    {       
+        if (_ammoCount <= 0) return;
+        _ammoCount -= 1;
+        _uiManager.ChangeAmmoCount(_ammoCount, _maxAmmoCount);
+
+ 
+        _canFire = Time.time + _fireRate;
+        
+        
+        if(_homingLaser == false)
+        {
+            Instantiate(_laserPrefab, new Vector3(this.transform.position.x, this.transform.position.y + 1.05f), Quaternion.identity);
+
+            if (_isTripleShot == true)
+            {
+                Instantiate(_tripleShotPrefab, new Vector3(this.transform.position.x, this.transform.position.y), Quaternion.identity);
+            }
+        }
+        else if(_homingLaser == true)
+>>>>>>> Stashed changes
         {
             Instantiate(_tripleShotPrefab, new Vector3(this.transform.position.x, this.transform.position.y), Quaternion.identity);
         }
@@ -134,7 +204,41 @@ public class Player : MonoBehaviour
                 break;
             case 2:
                 _isShield = true;
+<<<<<<< Updated upstream
                 _shieldVisual.SetActive(true);
+=======
+                _shieldHP = 3;
+                foreach(GameObject s in _shieldVisuals)
+                {
+                    s.SetActive(true);
+                }
+                break;
+            case 3:            
+                _ammoCount += 15;
+                if(_ammoCount > _maxAmmoCount)
+                {
+                    _ammoCount = _maxAmmoCount;
+                }
+                _uiManager.ChangeAmmoCount(_ammoCount, _maxAmmoCount);              
+                break;
+            case 4:
+                if(_lives < 3)
+                {
+                    _lives += 1;
+                    _uiManager.ChangeLives(_lives);
+                    StartCoroutine(ChangeColors());
+                    Damage(false);
+                }
+                break;
+            case 5:
+                _homingLaser = true;
+>>>>>>> Stashed changes
+                break;
+            case 6:
+                _fireRate *= _fireRateMultiplier;
+                _speed /= _speedBoostMultiplier;
+                _bugParticles.SetActive(true);
+                GetComponent<SpriteRenderer>().color = Color.red;
                 break;
             default:
                 Debug.Log("No powerup");
@@ -148,7 +252,7 @@ public class Player : MonoBehaviour
     {
         float waitTime = 0f;
 
-        if(powerupID == 0)
+        if(powerupID == 0 || powerupID == 6)
         {
             waitTime = 5f;
         }
@@ -167,22 +271,35 @@ public class Player : MonoBehaviour
             case 1:
                 _speed /= _speedBoostMultiplier;
                 break;
+            case 6:
+                _fireRate /= _fireRateMultiplier;
+                _speed *= _speedBoostMultiplier;
+                _bugParticles.SetActive(false);
+                GetComponent<SpriteRenderer>().color = Color.white;
+                break;
         }
         
     }
 
-
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Laser")
-        {
+        {      
             if (other.GetComponent<Laser>().enemyLaser == false) return;
+<<<<<<< Updated upstream
             Destroy(other.gameObject);
 
+=======
+
+            Destroy(other.gameObject);
+            
+>>>>>>> Stashed changes
             GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
             Destroy(explosion, 3f);
             _explosionAudio.Play();
 
+<<<<<<< Updated upstream
             Damage();
             _uiManager.ChangeLives(_lives);
         }
@@ -191,10 +308,64 @@ public class Player : MonoBehaviour
     public void Damage()
     {
         if(_isShield == false)
+=======
+            Damage(true);          
+        }
+
+        if (other.gameObject.tag == "Laserbeam")
+        {
+            _inLaser = true;
+            
+            if(_inLaserRoutine != null)
+            {
+                StopCoroutine(_inLaserRoutine);
+            }
+
+            _inLaserRoutine = InLaser();
+            StartCoroutine(_inLaserRoutine);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Laserbeam")
+        {
+            _inLaser = false;
+        }
+    }
+
+    private IEnumerator InLaser()
+    {      
+        while(_inLaser == true)
+        {
+            GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            Destroy(explosion, 3f);
+            _explosionAudio.Play();
+
+            Damage(true);
+
+            yield return new WaitForSeconds(1f);
+        }      
+    }
+
+
+    public void Damage(bool damage)
+    {
+        if (_invincible == true) return;
+
+        if(damage == true)
+>>>>>>> Stashed changes
         {
             _lives -= 1;
         }
+<<<<<<< Updated upstream
         else if(_isShield == true)
+=======
+
+        _uiManager.ChangeLives(_lives);
+
+        if (_lives == 3)
+>>>>>>> Stashed changes
         {
             _shieldVisual.SetActive(false);
             _isShield = false;         

@@ -7,6 +7,8 @@ TagManager:
   - Laser
   - Enemy
   - Powerup
+  - Invincible
+  - Laserbeam
   layers:
   - Default
   - TransparentFX

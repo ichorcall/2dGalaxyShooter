@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 4
+  _enemyDeath: {fileID: 0}
   _explosionAudio: {fileID: 0}
   _laserPrefab: {fileID: 6887129877356630751, guid: b6a26443e7660ca42a2ed18bfc7919d2,
     type: 3}
@@ -158,10 +159,10 @@ Animator:
   m_GameObject: {fileID: 9093652857434445521}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 48cffd082a39ccd488f256b543078657, type: 2}
+  m_Controller: {fileID: 9100000, guid: 677473d23fc79364aafd3ba004b99042, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1

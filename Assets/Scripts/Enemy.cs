@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     private UIManager _uiManager;
 
     private Animator _anim;
+
     private BoxCollider2D _coll;
 
     [SerializeField]
@@ -21,13 +22,37 @@ public class Enemy : MonoBehaviour
     private GameObject _laserPrefab;
     private bool _fireLaser = true;
 
+    [SerializeField]
+    private int _enemyID;
+    //0 = normal
+    //1 = laser enemy
+    public bool relocate = false;
+    [SerializeField]
+    private GameObject _parent;
+    [SerializeField]
+    private GameObject _laserbeamColPrefab;
+    [SerializeField]
+    private GameObject[] _laserbeams;
+    private GameObject _laserbeamCol;
+    public bool spawnLaser = false;
+    private bool _stopLaserMovement = false;
+    [SerializeField]
+    private GameObject _explosion;
+
+    //make an enemy that comes in side to side from the top, then stops to shoot a laser below. rare enemy
     private void Start()
     {
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         _explosionAudio = GameObject.Find("ExplosionAudio").GetComponent<AudioSource>();
 
+        if(_enemyID == 0)
+        {
+            StartCoroutine(FireLaser());
+        }
 
-        if(_uiManager == null)
+
+
+        if (_uiManager == null)
         {
             Debug.LogError("UI manager is null");
         }
@@ -49,20 +74,66 @@ public class Enemy : MonoBehaviour
             Debug.LogError("coll in null");
         }
 
-        StartCoroutine(FireLaser());
+        
     }
     // Update is called once per frame
     void Update()
     {
+        switch (_enemyID)
+        {
+            case 0:
+                EnemyMovement();
+                break;
+            case 1:
+                if(_stopLaserMovement == false)
+                {
+                    LaserEnemyMovement();
+                }
+                break;      
+        }
+    }
+
+    
+
+    public void EnemyMovement()
+    {
         transform.Translate(-Vector3.up * Time.deltaTime * _speed);
 
-        if(transform.position.y < -6)
+        if (transform.position.y < -6)
         {
             _randomPosX = Random.Range(-6.5f, 6.5f);
             transform.position = new Vector3(_randomPosX, 7, 0);
         }
-
     }
+
+
+    public void LaserEnemyMovement()
+    {  
+        if(relocate == true)
+        {
+            _randomPosX = Random.Range(-6.5f, 6.5f);
+            _parent.transform.position = new Vector3(_randomPosX, 7, 0);
+            relocate = false;
+        }
+
+        if (spawnLaser == true)
+        {
+            if(_laserbeamCol == null)
+            {
+                _laserbeamCol = Instantiate(_laserbeamColPrefab, transform.position, Quaternion.identity);
+            }
+            
+        }
+        else if(spawnLaser == false)
+        {
+            if(_laserbeamCol != null)
+            {
+                Destroy(_laserbeamCol);
+            }
+        }
+        
+    }
+
 
     IEnumerator FireLaser()
     {
@@ -73,45 +144,72 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.gameObject.tag == "Laser")
         {
             if (other.GetComponent<Laser>().enemyLaser == true) return;
 
-            _fireLaser = false;
             Destroy(other.gameObject);
 
-            _anim.SetTrigger("OnEnemyDeath");
+            if (_enemyID == 0)
+            {
+                _fireLaser = false;
+
+                _anim.SetTrigger("OnEnemyDeath");              
+                Destroy(this.gameObject, 2f);               
+            }
+            else if (_enemyID == 1)
+            {
+                _stopLaserMovement = true;
+
+                GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                Destroy(explosion, 2f);
+
+                Destroy(_laserbeamCol);
+                foreach (GameObject l in _laserbeams)
+                {
+                    Destroy(l.gameObject);
+                }               
+                GetComponent<SpriteRenderer>().enabled = false;          
+                
+                Destroy(_parent, 2f);              
+            }
+
             _coll.enabled = false;
-
             _explosionAudio.Play();
-
-            Debug.Log("DEBUG TEST: Enemy has been destroyed!");
-
             _speed = 0;
-            Destroy(this.gameObject, 2f);
-            _uiManager.AddScore(10);           
+            _uiManager.AddScore(10);
         }
 
-        if(other.gameObject.tag == "Player")
+
+        if (other.gameObject.tag == "Player")
         {
             _fireLaser = false;
             Player player = other.gameObject.GetComponent<Player>();
             
             if(player != null)
             {
+<<<<<<< Updated upstream
                 player.Damage();
+=======
+                player.Damage(true);
+>>>>>>> Stashed changes
                 _uiManager.ChangeLives(player._lives);
             }
 
-            _anim.SetTrigger("OnEnemyDeath");
-            _coll.enabled = false;
+            if(_enemyID == 0)
+            {
+                _anim.SetTrigger("OnEnemyDeath");
+                _coll.enabled = false;
 
-            _explosionAudio.Play();
+                _explosionAudio.Play();
 
-            _speed = 0;
-            Destroy(this.gameObject, 2f);
+                _speed = 0;
+                Destroy(this.gameObject, 2f);
+            }
+            
         }
     }
 }

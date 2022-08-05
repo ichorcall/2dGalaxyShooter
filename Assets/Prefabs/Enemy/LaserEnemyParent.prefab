@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8148125037051038610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8148125037051038609}
+  m_Layer: 0
+  m_Name: LaserEnemyParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8148125037051038609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8148125037051038610}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.36, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 6985593629560521966}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &8148125035485870284
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8148125037051038609}
+    m_Modifications:
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2909334226984259508, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: m_Name
+      value: LaserEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8495744366159221285, guid: e569a039a64f89b4e89d51a8dd05128c,
+        type: 3}
+      propertyPath: _parent
+      value: 
+      objectReference: {fileID: 8148125037051038610}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e569a039a64f89b4e89d51a8dd05128c, type: 3}
+--- !u!4 &6985593629560521966 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1288633028787436578, guid: e569a039a64f89b4e89d51a8dd05128c,
+    type: 3}
+  m_PrefabInstance: {fileID: 8148125035485870284}
+  m_PrefabAsset: {fileID: 0}

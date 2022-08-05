@@ -12,6 +12,13 @@ public class PowerUp : MonoBehaviour
     //0 tripleshot
     //1 speed
     //2 shield
+<<<<<<< Updated upstream
+=======
+    //3 ammo
+    //4 hp
+    //5 homing
+    //6 bug
+>>>>>>> Stashed changes
     [SerializeField]
     private AudioSource _powerupAudio;
 
