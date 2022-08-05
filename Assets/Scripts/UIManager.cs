@@ -59,12 +59,12 @@ public class UIManager : MonoBehaviour
     public void AddScore(int points)
     {
         _score += points;
-        _scoreText.text = "Score: " + _score;
+        _scoreText.text = "SCORE: " + _score;
     }
 
-    public void ChangeAmmoCount(int ammoCount)
+    public void ChangeAmmoCount(int ammoCount, int maxAmmoCount)
     {
-        _ammoCountText.text = "Ammo: " + ammoCount;
+        _ammoCountText.text = "AMMO: " + ammoCount + " / " + maxAmmoCount;
 
         if(ammoCount == 0)
         {

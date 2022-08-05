@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
     private GameObject[] _shieldVisuals;
     private int _shieldHP;
 
-    private int _ammoCount = 15;
+   
 
     private bool _homingLaser = false;
     [SerializeField]
@@ -66,6 +66,12 @@ public class Player : MonoBehaviour
     private IEnumerator rechargingRoutine;
     private bool _noEnergy = false;
     private bool _rechargeEnergy = true;
+
+
+    [SerializeField]
+    private int _maxAmmoCount = 50;
+    [SerializeField]
+    private int _ammoCount = 15;
 
     void Start()
     {
@@ -251,7 +257,7 @@ public class Player : MonoBehaviour
     {       
         if (_ammoCount <= 0) return;
         _ammoCount -= 1;
-        _uiManager.ChangeAmmoCount(_ammoCount);
+        _uiManager.ChangeAmmoCount(_ammoCount, _maxAmmoCount);
 
         _canFire = Time.time + _fireRate;
 
@@ -299,7 +305,11 @@ public class Player : MonoBehaviour
                 break;
             case 3:            
                 _ammoCount += 15;
-                _uiManager.ChangeAmmoCount(_ammoCount);              
+                if(_ammoCount > _maxAmmoCount)
+                {
+                    _ammoCount = _maxAmmoCount;
+                }
+                _uiManager.ChangeAmmoCount(_ammoCount, _maxAmmoCount);              
                 break;
             case 4:
                 if(_lives < 3)

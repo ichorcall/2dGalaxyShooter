@@ -484,7 +484,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -277, y: 67}
+  m_AnchoredPosition: {x: -299.8, y: 67}
   m_SizeDelta: {x: 187.7, y: 58.200012}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &173759475
@@ -508,7 +508,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 24
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 40
@@ -518,7 +518,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Ammo: 15'
+  m_Text: 'AMMO: 15 / 50'
 --- !u!222 &173759476
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -897,6 +897,8 @@ MonoBehaviour:
     type: 3}
   _maxEnergy: 250
   _energyAmount: 250
+  _maxAmmoCount: 50
+  _ammoCount: 15
 --- !u!212 &635197169
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1876,7 +1878,7 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 24
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 40
@@ -1886,7 +1888,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Score: 1000'
+  m_Text: 'SCORE: 1000'
 --- !u!222 &1473314155
 CanvasRenderer:
   m_ObjectHideFlags: 0
