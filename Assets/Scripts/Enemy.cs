@@ -38,6 +38,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject _explosion;
 
+    [SerializeField]
+    private GameObject _enemyShield;
+
     private void Start()
     {
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -50,6 +53,13 @@ public class Enemy : MonoBehaviour
         else if(_enemyID == 0)
         {
             StartCoroutine(FireLaser());
+
+            //enemy shields
+            int randomShieldChance = Random.Range(0, 10);
+            if(randomShieldChance >= 0 && randomShieldChance < 5)
+            {
+                _enemyShield.SetActive(true);
+            }
         }
 
         if(_uiManager == null)
@@ -153,9 +163,17 @@ public class Enemy : MonoBehaviour
 
             if(_enemyID == 0)
             {
-                _fireLaser = false;
-                _anim.SetTrigger("OnEnemyDeath");
-                Destroy(this.gameObject, 2f);
+                if(_enemyShield.activeSelf == true)
+                {
+                    _enemyShield.SetActive(false);
+                    return;
+                }
+                else if(_enemyShield.activeSelf == false)
+                {
+                    _fireLaser = false;
+                    _anim.SetTrigger("OnEnemyDeath");
+                    Destroy(this.gameObject, 2f);
+                }              
             }
             else if(_enemyID == 1)
             {
@@ -184,22 +202,35 @@ public class Enemy : MonoBehaviour
 
         if(other.gameObject.tag == "Player")
         {
-            _fireLaser = false;
+
+            if (_enemyShield.activeSelf == true)
+            {
+                _enemyShield.SetActive(false);
+
+                GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                Destroy(explosion, 2f);
+                _explosionAudio.Play();             
+            }
+            else if (_enemyShield.activeSelf == false)
+            {
+                _fireLaser = false;              
+
+                _anim.SetTrigger("OnEnemyDeath");
+                _coll.enabled = false;
+
+                _explosionAudio.Play();
+
+                _speed = 0;
+                Destroy(this.gameObject, 2f);
+            }
+
             Player player = other.gameObject.GetComponent<Player>();
-            
-            if(player != null)
+
+            if (player != null)
             {
                 player.Damage(true);
                 _uiManager.ChangeLives(player._lives);
             }
-
-            _anim.SetTrigger("OnEnemyDeath");
-            _coll.enabled = false;
-
-            _explosionAudio.Play();
-
-            _speed = 0;
-            Destroy(this.gameObject, 2f);
         }
     }
 }

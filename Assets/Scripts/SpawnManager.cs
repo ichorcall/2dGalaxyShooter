@@ -11,7 +11,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject[] _powerUps;
     [SerializeField]
     private GameObject[] _collectables;
-
+    //0 ammo
+    //1 hp
     
     private bool _spawnEnemy = true;
     private bool _spawnPowerup = true;
@@ -70,7 +71,7 @@ public class SpawnManager : MonoBehaviour
 
             int randomEnemyChance = Random.Range(0, 10);
             int enemyID = 0;
-            if(randomEnemyChance >= 0 && randomEnemyChance < 4)
+            if(randomEnemyChance >= 0 && randomEnemyChance < 2)
             {
                 enemyID = 1;
             }
@@ -97,7 +98,7 @@ public class SpawnManager : MonoBehaviour
 
             //random chance for homing:
             int rarePowerupChance = Random.Range(0, 10);
-            if(rarePowerupChance >= 0 && rarePowerupChance < 3)
+            if(rarePowerupChance >= 0 && rarePowerupChance < 2)
             {
                 GameObject homingLaser = Instantiate(_homingLaserPowerup, new Vector3(randomPosX, 7, 0), Quaternion.identity);
             }
@@ -119,8 +120,16 @@ public class SpawnManager : MonoBehaviour
         while (_spawnCollectable == true)
         {
             float randomPosX = Random.Range(-5f, 6f);
-            int randomCollectable = Random.Range(0, _collectables.Length);
-            GameObject powerup = Instantiate(_collectables[randomCollectable], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+
+            int rareCollectableChance = Random.Range(0, 10);
+            if (rareCollectableChance >= 0 && rareCollectableChance < 2)
+            {
+                GameObject HP = Instantiate(_collectables[1], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }
+            else if(rareCollectableChance >= 2 && rareCollectableChance <= 10)
+            {
+                GameObject Ammo = Instantiate(_collectables[0], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }          
 
             float randomTime = Random.Range(3, 8);
             yield return new WaitForSeconds(randomTime);
