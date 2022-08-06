@@ -73,6 +73,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _ammoCount = 15;
 
+    private float _fireRateMultiplier = 2f;
+    [SerializeField]
+    private GameObject _bugParticles;
+
+    private bool _inLaser = false;
+    private IEnumerator _inLaserRoutine;
+
     void Start()
     {
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -323,6 +330,12 @@ public class Player : MonoBehaviour
             case 5:
                 _homingLaser = true;
                 break;
+            case 6:
+                _fireRate *= _fireRateMultiplier;
+                _speed /= _speedBoostMultiplier;
+                _bugParticles.SetActive(true);
+                GetComponent<SpriteRenderer>().color = Color.red;
+                break;
             default:
                 Debug.Log("No powerup");
                 break;
@@ -357,7 +370,7 @@ public class Player : MonoBehaviour
     {
         float waitTime = 0f;
 
-        if(powerupID == 0)
+        if(powerupID == 0 || powerupID == 6)
         {
             waitTime = 5f;
         }
@@ -375,6 +388,12 @@ public class Player : MonoBehaviour
                 break;
             case 1:
                 _speed /= _speedBoostMultiplier;
+                break;
+            case 6: 
+                _fireRate /= _fireRateMultiplier;
+                _speed *= _speedBoostMultiplier;
+                _bugParticles.SetActive(false);
+                GetComponent<SpriteRenderer>().color = Color.white;
                 break;
         }
         
@@ -397,9 +416,42 @@ public class Player : MonoBehaviour
 
             Destroy(other.gameObject);
         }
+
+        if(other.gameObject.tag == "Laserbeam")
+        {
+            _inLaser = true;
+
+            if(_inLaserRoutine != null)
+            {
+                StopCoroutine(_inLaserRoutine);
+            }
+
+            _inLaserRoutine = InLaser();
+            StartCoroutine(_inLaserRoutine);
+        }
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Laserbeam")
+        {
+            _inLaser = false;
+        }
+    }
 
+    private IEnumerator InLaser()
+    {
+        while(_inLaser == true)
+        {
+            GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            Destroy(explosion, 3f);
+            _explosionAudio.Play();
+
+            Damage(true);
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
 
     public void Damage(bool damage)
     {
