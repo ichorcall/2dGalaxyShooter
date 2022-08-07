@@ -106,6 +106,8 @@ public class Player : MonoBehaviour
 
     }
 
+    private bool _invincible = false;
+
     void Update()
     {
         CalculateMovement();
@@ -118,9 +120,11 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.R))
         {
             _homingLaser = true;
+            _invincible = true;
         }
 
         Thrusters();
+
     }
 
     
@@ -455,6 +459,9 @@ public class Player : MonoBehaviour
 
     public void Damage(bool damage)
     {
+
+        if (_invincible == true) return;
+
         if(damage == true)
         {
             if (_isShield == false)

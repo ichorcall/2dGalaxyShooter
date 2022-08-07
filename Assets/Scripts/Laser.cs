@@ -49,8 +49,8 @@ public class Laser : MonoBehaviour
         if(other.gameObject.tag == "Enemy")
         {
             Vector3 targetDir = other.gameObject.transform.position - transform.position;
-            float angle = Mathf.Atan2(targetDir.x, targetDir.y) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle * -1, Vector3.forward), .1f);
+            float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), .1f);
         }
     }
 

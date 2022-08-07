@@ -41,6 +41,13 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject _enemyShield;
 
+    [SerializeField]
+    private GameObject _detectionPrefab;
+    private GameObject _detection;
+    [SerializeField]
+    private GameObject _sparks;
+    private Player _player;
+
     private void Start()
     {
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -60,6 +67,10 @@ public class Enemy : MonoBehaviour
             {
                 _enemyShield.SetActive(true);
             }
+        }
+        else if(_enemyID == 2)
+        {
+            _detection = Instantiate(_detectionPrefab);
         }
 
         if(_uiManager == null)
@@ -84,12 +95,16 @@ public class Enemy : MonoBehaviour
             Debug.LogError("coll in null");
         }
 
-        
+        _player = FindObjectOfType<Player>();
+        if (_player == null)
+        {
+            Debug.LogError("player in null");
+        }
+
     }
     // Update is called once per frame
     void Update()
     {
-
         switch (_enemyID)
         {
             case 0:
@@ -101,12 +116,36 @@ public class Enemy : MonoBehaviour
                     LaserEnemyMovement();
                 }
                 break;
-        
+            case 2:
+                AggroMovement();
+                EnemyMovement();
+                break;
         }
+    }
 
+    public void AggroMovement()
+    {
+        _detection.transform.position = this.transform.position;
 
+        if (_detection.GetComponent<Detection>().playerDetected == true)
+        {
+            Vector3 targetDir = _player.gameObject.transform.position - transform.position;
+            float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg + 90f;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), .02f);
 
+            float distance = Vector2.Distance(_player.transform.position, this.transform.position);
 
+            if(distance < 5)
+            {
+                _speed = 10 - distance;
+            }
+        }
+        else if(_detection.GetComponent<Detection>().playerDetected == false)
+        {
+            Quaternion normalRot = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.z);
+            transform.rotation = Quaternion.Lerp(transform.rotation, normalRot, .02f);
+            _speed = 4f;
+        }        
     }
 
     public void EnemyMovement()
@@ -179,14 +218,23 @@ public class Enemy : MonoBehaviour
             {
                 _stopLaserMovement = true;
 
-                GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
-                Destroy(explosion, 2f);
-
                 Destroy(_laserbeamCol);
                 foreach(GameObject l in _laserbeams)
                 {
                     Destroy(l.gameObject);
                 }
+                GetComponent<SpriteRenderer>().enabled = false;
+            }
+            else if(_enemyID == 2)
+            {
+                _sparks.SetActive(false);
+            }
+
+            if(_enemyID == 1 || _enemyID == 2)
+            {
+                GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                Destroy(explosion, 2f);
+
                 GetComponent<SpriteRenderer>().enabled = false;
 
                 Destroy(_parent, 2f);
@@ -202,28 +250,43 @@ public class Enemy : MonoBehaviour
 
         if(other.gameObject.tag == "Player")
         {
-
-            if (_enemyShield.activeSelf == true)
+            if(_enemyID == 0)
             {
-                _enemyShield.SetActive(false);
+                if (_enemyShield.activeSelf == true)
+                {
+                    _enemyShield.SetActive(false);
 
+                    GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                    Destroy(explosion, 2f);
+                    _explosionAudio.Play();
+                }
+                else if (_enemyShield.activeSelf == false)
+                {
+                    _fireLaser = false;
+
+                    _anim.SetTrigger("OnEnemyDeath");
+                    _coll.enabled = false;
+
+                    _explosionAudio.Play();
+
+                    _speed = 0;
+                    Destroy(this.gameObject, 2f);
+                }
+            }
+            else if(_enemyID == 2)
+            {
                 GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
                 Destroy(explosion, 2f);
-                _explosionAudio.Play();             
-            }
-            else if (_enemyShield.activeSelf == false)
-            {
-                _fireLaser = false;              
-
-                _anim.SetTrigger("OnEnemyDeath");
-                _coll.enabled = false;
-
                 _explosionAudio.Play();
+
+                _sparks.SetActive(false);
+                GetComponent<SpriteRenderer>().enabled = false;
+                _coll.enabled = false;
 
                 _speed = 0;
                 Destroy(this.gameObject, 2f);
             }
-
+            
             Player player = other.gameObject.GetComponent<Player>();
 
             if (player != null)

@@ -6,9 +6,10 @@ public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject[] _enemyPrefab;
-
     [SerializeField]
-    private GameObject[] _powerUps;
+    private float[] _enemyWeights;
+    private float _totalEnemyWeight = 0;
+    
     [SerializeField]
     private GameObject[] _collectables;
     //0 ammo
@@ -32,6 +33,12 @@ public class SpawnManager : MonoBehaviour
     private int _waveNumber = 1;
     private bool _startWave = true;
 
+    [SerializeField]
+    private GameObject[] _powerUps;
+    [SerializeField]
+    private float[] _powerupWeights;
+    private float _totalWeight = 0;
+
     public void Start()
     {
 
@@ -39,6 +46,18 @@ public class SpawnManager : MonoBehaviour
         if (_uiManager == null)
         {
             Debug.LogError("UI manager is null");
+        }
+        
+        foreach (float w in _powerupWeights)
+        {
+            _totalWeight += w;
+            //we should get a sum of 47
+        }
+
+        foreach (float w in _enemyWeights)
+        {
+            _totalEnemyWeight += w;
+            //we should get a sum of 47
         }
     }
     public void StartSpawning()
@@ -54,7 +73,7 @@ public class SpawnManager : MonoBehaviour
     {
         while(_startWave == true)
         {
-            yield return new WaitForSeconds(10f);
+            yield return new WaitForSeconds(20f);
             _spawnTime /= 1.2f;
             _waveNumber += 1;
             _uiManager.ChangeWaveCount(_waveNumber);
@@ -69,20 +88,22 @@ public class SpawnManager : MonoBehaviour
         {
             float randomPosX = Random.Range(-5f, 6f);
 
-            int randomEnemyChance = Random.Range(0, 10);
-            int enemyID = 0;
-            if(randomEnemyChance >= 0 && randomEnemyChance < 2)
-            {
-                enemyID = 1;
-            }
-            else
-            {
-                enemyID = 0;
-            }
+            float cumulativeTotal = 0;
+            float randomValue = Random.Range(0, 100);
 
-            GameObject enemy = Instantiate(_enemyPrefab[enemyID], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            for (int i = 0; i <= _enemyWeights.Length; i++)
+            {
+                float enemyChance = (100 / _totalEnemyWeight) * _enemyWeights[i];
+    
+                cumulativeTotal += enemyChance;
 
-            enemy.transform.parent = _enemyContainer.transform;
+                if (cumulativeTotal >= randomValue)
+                {
+                    GameObject enemy = Instantiate(_enemyPrefab[i], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+                    enemy.transform.parent = _enemyContainer.transform;
+                    break;
+                }
+            }
 
             yield return new WaitForSeconds(_spawnTime);
         }
@@ -96,17 +117,28 @@ public class SpawnManager : MonoBehaviour
         {
             float randomPosX = Random.Range(-5f, 6f);
 
-            //random chance for homing:
-            int rarePowerupChance = Random.Range(0, 10);
-            if(rarePowerupChance >= 0 && rarePowerupChance < 2)
-            {
-                GameObject homingLaser = Instantiate(_homingLaserPowerup, new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            float cumulativeTotal = 0;
+            float randomValue = Random.Range(0, 100); 
+
+            for (int i = 0; i <= _powerupWeights.Length; i++) 
+            {               
+                //totalWeight is now 47
+                float powerupChance = (100 / _totalWeight) * _powerupWeights[i];
+                //for tripleshot: 2.13 * 10 = 21.3%
+                //for speed: 2.13 * 10 = 21.3% 
+                //for shield: 2.13 * 10 = 21.3%
+                //for homing: 2.13 * 5 = 10.65%
+                //for bug: 2.13 * 12 = 25.56%
+
+                cumulativeTotal += powerupChance;          
+
+                if (cumulativeTotal >= randomValue)
+                {
+                    GameObject powerup = Instantiate(_powerUps[i], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+                    break;
+                }
             }
-            else
-            {
-                int randomPowerup = Random.Range(0, _powerUps.Length);
-                GameObject powerup = Instantiate(_powerUps[randomPowerup], new Vector3(randomPosX, 7, 0), Quaternion.identity);
-            }
+            
 
             float randomTime = Random.Range(3, 8);
             yield return new WaitForSeconds(randomTime);
@@ -121,6 +153,33 @@ public class SpawnManager : MonoBehaviour
         {
             float randomPosX = Random.Range(-5f, 6f);
 
+            float hpChance = .2f;
+            float ammoChance = .8f;
+
+            float collectableChance = Random.Range(0, hpChance + ammoChance);
+            if(collectableChance < hpChance)
+            {
+                GameObject HP = Instantiate(_collectables[1], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }
+            else if(collectableChance < hpChance + ammoChance && collectableChance > hpChance)
+            {
+                GameObject Ammo = Instantiate(_collectables[0], new Vector3(randomPosX, 7, 0), Quaternion.identity);
+            }
+
+            /*
+            float[,] collectableChanceTable = { { .2f, 1f }, { .8f, 0f } };
+            float cumulativeWeight = 0;
+            for(int i = 0; i < collectableChanceTable.Length; i++)
+            {
+                cumulativeWeight += i;
+                if(collectableChance < cumulativeWeight)
+                {
+                    float value = collectableChanceTable[0 , i];
+                }
+            }
+            */
+
+            /*
             int rareCollectableChance = Random.Range(0, 10);
             if (rareCollectableChance >= 0 && rareCollectableChance < 2)
             {
@@ -129,7 +188,8 @@ public class SpawnManager : MonoBehaviour
             else if(rareCollectableChance >= 2 && rareCollectableChance <= 10)
             {
                 GameObject Ammo = Instantiate(_collectables[0], new Vector3(randomPosX, 7, 0), Quaternion.identity);
-            }          
+            }     
+            */
 
             float randomTime = Random.Range(3, 8);
             yield return new WaitForSeconds(randomTime);
