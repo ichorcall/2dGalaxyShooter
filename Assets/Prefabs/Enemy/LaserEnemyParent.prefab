@@ -9613,9 +9613,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 4
+  _coll: {fileID: 0}
   _explosionAudio: {fileID: 0}
   _laserPrefab: {fileID: 6887129877356630751, guid: b6a26443e7660ca42a2ed18bfc7919d2,
     type: 3}
+  _fireLaser: 0
   _enemyID: 1
   relocate: 0
   _parent: {fileID: 6166449991443473439}
@@ -9627,6 +9629,11 @@ MonoBehaviour:
   spawnLaser: 0
   _explosion: {fileID: 1756978831533163440, guid: c5f2dc847a456f84081d111dd0d03647,
     type: 3}
+  _enemyShield: {fileID: 0}
+  _detectionPrefab: {fileID: 0}
+  _detection: {fileID: 0}
+  _sparks: {fileID: 0}
+  _homingLaser: {fileID: 0}
 --- !u!50 &4858916715488584093
 Rigidbody2D:
   serializedVersion: 4

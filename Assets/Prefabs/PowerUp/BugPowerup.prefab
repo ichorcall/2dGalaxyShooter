@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1656789392382213448}
   - component: {fileID: 590772791727165335}
   - component: {fileID: 2159421595492732852}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BugPowerup
   m_TagString: Powerup
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 7433374178504779021}
   - component: {fileID: 7433374178504779023}
   - component: {fileID: 7433374178504779022}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BugSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

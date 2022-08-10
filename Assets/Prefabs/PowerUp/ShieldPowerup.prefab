@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6188589200351584765}
   - component: {fileID: 6188589200351584764}
   - component: {fileID: 6188589200351584766}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ShieldPowerup
   m_TagString: Powerup
   m_Icon: {fileID: 0}
@@ -155,3 +155,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 3
   _powerupID: 2
+  _powerupAudio: {fileID: 0}

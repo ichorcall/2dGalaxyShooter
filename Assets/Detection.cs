@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Detection : MonoBehaviour
 {
-    public bool playerDetected = false;
 
+    public bool playerDetected = false;
     public void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")

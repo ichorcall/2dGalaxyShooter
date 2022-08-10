@@ -7415,9 +7415,11 @@ MonoBehaviour:
   - {fileID: 9093652857434445521, guid: 4165284eaa5a52e4fac37ba98d9d91f3, type: 3}
   - {fileID: 6166449991443473439, guid: 85fefadb4572d1844a6fe5997192eadc, type: 3}
   - {fileID: 1477833582696321617, guid: 2dfe514547091e34eb961ceab0a8fd15, type: 3}
+  - {fileID: 2465908009186907253, guid: 0ecc10ba6ef222c48bf16bdf3e72d0ce, type: 3}
   _enemyWeights:
-  - 30
+  - 50
   - 10
+  - 20
   - 20
   _collectables:
   - {fileID: 3862103948743027071, guid: 3d753e14f4bb83b4f84eff0d8f3b26a2, type: 3}

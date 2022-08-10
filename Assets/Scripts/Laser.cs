@@ -9,6 +9,8 @@ public class Laser : MonoBehaviour
     private float _speed = 8f;
 
     public bool enemyLaser;
+
+
     [SerializeField]
     private bool _homingLaser;
     // Update is called once per frame
@@ -18,10 +20,15 @@ public class Laser : MonoBehaviour
         {
             PlayerLaser();
         }
-        else if(enemyLaser == true)
+        else if(enemyLaser == true && _homingLaser == false)
         {
             EnemyLaser();
         }
+        else if(enemyLaser == true && _homingLaser == true)
+        {
+            PlayerLaser();
+        }
+
 
     }
 
@@ -46,7 +53,18 @@ public class Laser : MonoBehaviour
     {
         if (_homingLaser == false) return;
 
-        if(other.gameObject.tag == "Enemy")
+        string target = "";
+
+        if (enemyLaser == false)
+        {
+            target = "Enemy";
+        }
+        else if(enemyLaser == true)
+        {
+            target = "Player";
+        }
+
+        if(other.gameObject.tag == target)
         {
             Vector3 targetDir = other.gameObject.transform.position - transform.position;
             float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg - 90f;
