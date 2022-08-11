@@ -49,9 +49,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 4
+  _coll: {fileID: 0}
   _explosionAudio: {fileID: 0}
-  _laserPrefab: {fileID: 6887129877356630751, guid: b6a26443e7660ca42a2ed18bfc7919d2,
+  _laserPrefab: {fileID: 6887129877356630751, guid: be80181f6722fad44a2cb32f77150cc1,
     type: 3}
+  _fireLaser: 1
   _enemyID: 2
   relocate: 0
   _parent: {fileID: 1477833582696321617}
@@ -63,7 +65,9 @@ MonoBehaviour:
   _enemyShield: {fileID: 0}
   _detectionPrefab: {fileID: 3602617504524615510, guid: d27884613605a9045a011a8cddb83a6e,
     type: 3}
+  _detection: {fileID: 0}
   _sparks: {fileID: 3652318081478354172}
+  _homingLaser: {fileID: 0}
 --- !u!50 &3729964348731225323
 Rigidbody2D:
   serializedVersion: 4

@@ -9615,7 +9615,7 @@ MonoBehaviour:
   _speed: 4
   _coll: {fileID: 0}
   _explosionAudio: {fileID: 0}
-  _laserPrefab: {fileID: 6887129877356630751, guid: b6a26443e7660ca42a2ed18bfc7919d2,
+  _laserPrefab: {fileID: 6887129877356630751, guid: be80181f6722fad44a2cb32f77150cc1,
     type: 3}
   _fireLaser: 0
   _enemyID: 1

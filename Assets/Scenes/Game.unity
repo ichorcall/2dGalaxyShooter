@@ -7417,7 +7417,7 @@ MonoBehaviour:
   - {fileID: 1477833582696321617, guid: 2dfe514547091e34eb961ceab0a8fd15, type: 3}
   - {fileID: 2465908009186907253, guid: 0ecc10ba6ef222c48bf16bdf3e72d0ce, type: 3}
   _enemyWeights:
-  - 50
+  - 30
   - 10
   - 20
   - 20

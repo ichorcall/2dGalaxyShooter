@@ -18,10 +18,24 @@ public class PowerUp : MonoBehaviour
     [SerializeField]
     private AudioSource _powerupAudio;
 
+    [SerializeField]
+    private AudioSource _explosionAudio;
+    [SerializeField]
+    private GameObject _explosion;
+
+    private Player _player;
+    private bool _moveToPlayer = false;
+
     private void Start()
     {
         _powerupAudio = GameObject.Find("PowerupAudio").GetComponent<AudioSource>();
         if (_powerupAudio == null) Debug.LogError("Powerup audio is null");
+
+        _explosionAudio = GameObject.Find("ExplosionAudio").GetComponent<AudioSource>();
+        if (_explosionAudio == null) Debug.LogError("_explosionAudio is null");
+
+        _player = FindObjectOfType<Player>();
+        if (_player == null) Debug.LogError("player is null");
     }
 
     void Update()
@@ -31,6 +45,16 @@ public class PowerUp : MonoBehaviour
         if(transform.position.y <= -6)
         {
             Destroy(this.gameObject);
+        }
+
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            _moveToPlayer = true;
+        }
+
+        if(_moveToPlayer == true)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, _player.transform.position, _speed * Time.deltaTime);
         }
     }
 
@@ -47,6 +71,26 @@ public class PowerUp : MonoBehaviour
             _powerupAudio.Play();
 
             Destroy(this.gameObject);
+        }
+
+        if(other.gameObject.tag == "Laser")
+        {
+            if (other.gameObject.GetComponent<Laser>().enemyLaser == false) return;
+
+            GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+            Destroy(explosion, 2f);
+            _explosionAudio.Play();
+
+            _speed = 0;
+            
+            if(transform.childCount > 0)
+            {
+                GetComponentInChildren<SpriteRenderer>().enabled = false;
+            }
+            GetComponent<SpriteRenderer>().enabled = false;
+
+            GetComponent<CircleCollider2D>().enabled = false;
+            Destroy(this.gameObject, 2f);
         }
     }
 }

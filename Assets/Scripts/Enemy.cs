@@ -172,8 +172,15 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        RayCastPowerup();
+        if(_stopRaycast == false)
+        {
+            RayCastPowerup();
+        }
+        
     }
+
+    private GameObject _tempLaser = null;
+    private bool _stopRaycast = false;
 
     public void RayCastPowerup()
     {
@@ -186,30 +193,17 @@ public class Enemy : MonoBehaviour
             if (hit.collider.gameObject.tag == "Powerup")
             {
                 Debug.DrawRay(transform.position, -Vector3.up * 10, Color.red, 0);
-                Debug.Log("Hit Powerup!");
+
+                if(_tempLaser == null)
+                {
+                    Vector3 pos = new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z);
+                    _tempLaser = Instantiate(_laserPrefab, pos, Quaternion.identity);
+                }               
             }
         }
     }
 
-    /*
-    public void RayCastPowerup()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, -Vector2.up, 10, LayerMask.GetMask("Powerup"));
-
-        Debug.DrawRay(transform.position, -Vector3.up * 10, Color.white, 0);
-
-        if (hit.collider != null)
-        {
-            if (hit.collider.gameObject.tag == "Player")
-            {
-                Debug.DrawRay(transform.position, -Vector3.up * 10, Color.red, 0);
-                Debug.Log("Hit Player!");
-            }
-
-        } 
-        
-    }
-    */
+    
 
     public void AggroMovement()
     {
@@ -275,9 +269,12 @@ public class Enemy : MonoBehaviour
 
     public IEnumerator FireHomingLaser()
     {
-        Vector3 pos = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
-        GameObject homingLaser = Instantiate(_homingLaser, pos, Quaternion.identity);
-        yield return new WaitForSeconds(Random.Range(.5f, 1f));
+        while (_fireLaser == true)
+        {
+            Vector3 pos = new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z);
+            GameObject homingLaser = Instantiate(_homingLaser, pos, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(.5f, 1f));
+        }
     }
 
     IEnumerator FireLaser()
@@ -368,16 +365,19 @@ public class Enemy : MonoBehaviour
         }
 
         //for all enemies except normal enemy
+        
         if (_parent != null)
         {
             Destroy(_parent, 2f);
         }
+        
 
         _stopLaserMovement = true; //can be disabled for any enemy without effect
         _fireLaser = false; //can be disabled for any enemy without effect
         _coll.enabled = false; //all enemies should have a boxcollider disabled
         _explosionAudio.Play(); //all enemies should enable the explosion audio
         _speed = 0; //all enemies should stop moving
+        _stopRaycast = true;
 
         int scorePoints = 0;
         switch(_enemyID)
