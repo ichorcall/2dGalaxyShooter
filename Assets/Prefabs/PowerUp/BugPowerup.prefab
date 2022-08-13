@@ -142,6 +142,7 @@ MonoBehaviour:
   _explosionAudio: {fileID: 0}
   _explosion: {fileID: 1756978831533163440, guid: c5f2dc847a456f84081d111dd0d03647,
     type: 3}
+  _nameSprite: {fileID: 7433374178504779020}
 --- !u!95 &2159421595492732852
 Animator:
   serializedVersion: 3

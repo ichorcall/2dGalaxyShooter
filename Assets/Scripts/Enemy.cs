@@ -29,6 +29,7 @@ public class Enemy : MonoBehaviour
     //1 laser
     //2 aggro
     //3 smart
+    //4 fast
     public bool relocate = false;
     [SerializeField]
     private GameObject _parent;
@@ -85,12 +86,12 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if(_enemyID == 2)
+        if(_enemyID == 2 || _enemyID == 4)
         {
             _detection = Instantiate(_detectionPrefab);
         }
 
-        if(_enemyID == 3)
+        if(_enemyID == 3 || _enemyID == 4)
         {
             StartCoroutine(FireLaser());
         }
@@ -170,6 +171,14 @@ public class Enemy : MonoBehaviour
                     }
                 }
                 break;
+            case 4:
+                EnemyMovement();
+                FastMovement();
+                if (_detection != null)
+                {
+                    _detection.transform.position = this.transform.position;
+                }
+                break;
         }
 
         if(_stopRaycast == false)
@@ -203,7 +212,31 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    
+    public void FastMovement()
+    {
+        if (_detection == null) return;
+
+        if(_detection.GetComponent<Detection>().laserDetected == true)
+        {
+            GameObject laser = _detection.GetComponent<Detection>().incomingLaser;
+            Vector3 targetDir = laser.gameObject.transform.position - transform.position;
+            float angle = Mathf.Atan2(targetDir.y, targetDir.x) * Mathf.Rad2Deg + 90f;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.AngleAxis(angle * -1, Vector3.forward), .05f);
+
+            float distance = Vector2.Distance(laser.transform.position, this.transform.position);
+
+            if (distance < 3)
+            {
+                _speed = 10 - distance;
+            }
+        }
+        else
+        {
+            Quaternion normalRot = Quaternion.Euler(transform.rotation.x, 0, transform.rotation.z);
+            transform.rotation = Quaternion.Lerp(transform.rotation, normalRot, .02f);
+            _speed = 4f;
+        }
+    }
 
     public void AggroMovement()
     {
@@ -289,15 +322,20 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag != "Laser" && other.gameObject.tag != "Player") return;
+        if (other.gameObject.tag != "Laser" && other.gameObject.tag != "Player" && other.gameObject.tag != "Laserbeam") return;
 
         if(other.gameObject.tag == "Laser")
         {
             if (other.GetComponent<Laser>().enemyLaser == true) return;
             Destroy(other.gameObject);
         }
-        
-        if(other.gameObject.tag == "Player")
+
+        if (other.gameObject.tag == "Laserbeam")
+        {
+            if (other.GetComponent<Laser>().enemyLaser == true) return;
+        }
+
+        if (other.gameObject.tag == "Player")
         {
             Player player = other.gameObject.GetComponent<Player>();
 
@@ -311,23 +349,33 @@ public class Enemy : MonoBehaviour
         //for normal enemy
         if (_enemyShield != null)
         {
-            if (_enemyShield.activeSelf == true)
+            if(other.gameObject.tag == "Laserbeam")
             {
                 _enemyShield.SetActive(false);
-
-                if(other.gameObject.tag == "Player")
-                {
-                    GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
-                    Destroy(explosion, 2f);
-                    _explosionAudio.Play();
-                }
-                return;
-            }
-            else if (_enemyShield.activeSelf == false)
-            {
                 _anim.SetTrigger("OnEnemyDeath");
                 Destroy(this.gameObject, 2f);
             }
+            else
+            {
+                if (_enemyShield.activeSelf == true)
+                {
+                    _enemyShield.SetActive(false);
+
+                    if (other.gameObject.tag == "Player")
+                    {
+                        GameObject explosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                        Destroy(explosion, 2f);
+                        _explosionAudio.Play();
+                    }
+                    return;
+                }
+                else if (_enemyShield.activeSelf == false)
+                {
+                    _anim.SetTrigger("OnEnemyDeath");
+                    Destroy(this.gameObject, 2f);
+                }
+            }
+            
         }
 
         //for laser enemy
@@ -393,6 +441,9 @@ public class Enemy : MonoBehaviour
                 break;
             case 3:
                 scorePoints = 12;
+                break;
+            case 4:
+                scorePoints = 20;
                 break;
         }
         _uiManager.AddScore(scorePoints); //all enemies should add score; but can be changed based on type of enemy 

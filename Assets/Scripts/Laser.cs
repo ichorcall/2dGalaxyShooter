@@ -7,15 +7,18 @@ public class Laser : MonoBehaviour
 
     [SerializeField]
     private float _speed = 8f;
-
     public bool enemyLaser;
-
-
     [SerializeField]
     private bool _homingLaser;
+
+    [SerializeField]
+    private bool _laserBeam;
+
     // Update is called once per frame
     void Update()
     {
+        if (_laserBeam == true) return;
+
         if(enemyLaser == false)
         {
             PlayerLaser();
@@ -28,8 +31,6 @@ public class Laser : MonoBehaviour
         {
             PlayerLaser();
         }
-
-
     }
 
     void PlayerLaser()
@@ -51,6 +52,7 @@ public class Laser : MonoBehaviour
 
     public void OnTriggerStay2D(Collider2D other)
     {
+        if (_laserBeam == true) return;
         if (_homingLaser == false) return;
 
         string target = "";

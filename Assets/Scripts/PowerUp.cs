@@ -26,6 +26,9 @@ public class PowerUp : MonoBehaviour
     private Player _player;
     private bool _moveToPlayer = false;
 
+    [SerializeField]
+    private GameObject _nameSprite;
+
     private void Start()
     {
         _powerupAudio = GameObject.Find("PowerupAudio").GetComponent<AudioSource>();
@@ -83,10 +86,11 @@ public class PowerUp : MonoBehaviour
 
             _speed = 0;
             
-            if(transform.childCount > 0)
+            if(_nameSprite != null)
             {
-                GetComponentInChildren<SpriteRenderer>().enabled = false;
+                _nameSprite.GetComponent<SpriteRenderer>().enabled = false;
             }
+
             GetComponent<SpriteRenderer>().enabled = false;
 
             GetComponent<CircleCollider2D>().enabled = false;

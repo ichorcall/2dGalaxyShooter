@@ -80,6 +80,12 @@ public class Player : MonoBehaviour
     private bool _inLaser = false;
     private IEnumerator _inLaserRoutine;
 
+    [SerializeField]
+    private GameObject _laserbeamColPrefab;
+    private GameObject _laserbeamCol;
+    public bool spawnLaser = false;
+    public bool isLaserbeam = false;
+    private Animator _anim;
     void Start()
     {
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -100,6 +106,8 @@ public class Player : MonoBehaviour
             Debug.LogError("UI manager is null");
         }
 
+        _anim = GetComponent<Animator>();
+
         transform.position = new Vector3(0, -2f, 0);
 
         _thrusterCol = _thruster.GetComponent<SpriteRenderer>().color;
@@ -112,8 +120,30 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
+        if(spawnLaser == true)
+        {
+            if(_laserbeamCol == null)
+            {
+                _laserbeamCol = Instantiate(_laserbeamColPrefab, transform.position, Quaternion.identity);
+            }
+
+            if(_laserbeamCol != null)
+            {
+                _laserbeamCol.transform.position = this.transform.position;
+            }
+            
+        }
+        else if(spawnLaser == false)
+        {
+            if(_laserbeamCol != null)
+            {
+                Destroy(_laserbeamCol);
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
+            if (isLaserbeam == true) return;
             FireLaser();
         }
 
@@ -340,6 +370,9 @@ public class Player : MonoBehaviour
                 _bugParticles.SetActive(true);
                 GetComponent<SpriteRenderer>().color = Color.red;
                 break;
+            case 7:
+                _anim.SetTrigger("OnLaserbeam");
+                break;
             default:
                 Debug.Log("No powerup");
                 break;
@@ -347,6 +380,8 @@ public class Player : MonoBehaviour
 
         StartCoroutine(PowerupCooldown(powerupID));           
     }
+
+   
 
     public IEnumerator ChangeColors()
     {
@@ -423,6 +458,7 @@ public class Player : MonoBehaviour
 
         if(other.gameObject.tag == "Laserbeam")
         {
+            if (other.GetComponent<Laser>().enemyLaser == false) return;
             _inLaser = true;
 
             if(_inLaserRoutine != null)
@@ -439,6 +475,7 @@ public class Player : MonoBehaviour
     {
         if(other.gameObject.tag == "Laserbeam")
         {
+            if (other.GetComponent<Laser>().enemyLaser == false) return;
             _inLaser = false;
         }
     }
