@@ -30,6 +30,9 @@ public class UIManager : MonoBehaviour
     private Text _waveCountText;
     private IEnumerator _flashWave;
 
+    [SerializeField]
+    private Image _bossHPBar;
+
     void Start()
     {
         _livesIMG.sprite = _spriteLives[3];
@@ -53,6 +56,12 @@ public class UIManager : MonoBehaviour
         {
             _energyBar.color = Color.red;
         }
+    }
+
+    public void ChangeBossHP(float HP, float maxHP) //need to use float values
+    {
+        float fillPercent = HP / maxHP;
+        _bossHPBar.fillAmount = fillPercent;
     }
 
     public void ChangeLives(int currentLives)

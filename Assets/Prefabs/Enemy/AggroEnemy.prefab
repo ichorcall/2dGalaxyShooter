@@ -68,6 +68,10 @@ MonoBehaviour:
   _detection: {fileID: 0}
   _sparks: {fileID: 3652318081478354172}
   _homingLaser: {fileID: 0}
+  bossFight: 0
+  _laserPositions: []
+  _maxBossHP: 50
+  _bossHP: 0
 --- !u!50 &3729964348731225323
 Rigidbody2D:
   serializedVersion: 4

@@ -39,6 +39,15 @@ public class SpawnManager : MonoBehaviour
     private float[] _powerupWeights;
     private float _totalWeight = 0;
 
+    [SerializeField]
+    private GameObject _boss;
+    [SerializeField]
+    private GameObject _bossHPBar;
+    private bool _restart = false;
+    private bool _bossHere = false;
+
+
+
     public void Start()
     {
 
@@ -60,6 +69,39 @@ public class SpawnManager : MonoBehaviour
             //we should get a sum of 47
         }
     }
+
+    public void Update()
+    {
+        if(_boss == null)
+        {
+            _bossHere = false;
+        }
+
+        if (_bossHere == true)
+        {
+            _startWave = false;
+            _spawnEnemy = false;
+        }
+        else
+        {
+            _startWave = true;        
+            _spawnEnemy = true;
+
+            if(_boss == null)
+            {
+                if(_restart == false)
+                {
+                    _restart = true;
+                    _uiManager.AddScore(100);
+
+                    StartCoroutine(EnemyWave());
+                    StartCoroutine(SpawnEnemyRoutine());
+                }              
+            }         
+        }
+    }
+
+
     public void StartSpawning()
     {
         StartCoroutine(SpawnPowerupRoutine());
@@ -69,14 +111,37 @@ public class SpawnManager : MonoBehaviour
         _uiManager.ChangeWaveCount(_waveNumber);
     }
 
+    
     public IEnumerator EnemyWave()
     {
         while(_startWave == true)
         {
-            yield return new WaitForSeconds(20f);
+            yield return new WaitForSeconds(5f);
             _spawnTime /= 1.2f;
             _waveNumber += 1;
             _uiManager.ChangeWaveCount(_waveNumber);
+
+            if(_waveNumber == 3)
+            {
+                _bossHere = true;
+                _boss.SetActive(true);
+                _bossHPBar.SetActive(true);
+
+                leftOverEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+                foreach (GameObject e in leftOverEnemies)
+                {
+                    if(e.name.Contains("Boss"))
+                    {
+                        //do nothing
+                    }
+                    else
+                    {
+                        Destroy(e);
+                    }                 
+                }
+
+                _startWave = false;
+            }
         }
     }
 

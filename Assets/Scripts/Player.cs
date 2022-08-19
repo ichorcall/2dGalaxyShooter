@@ -155,6 +155,12 @@ public class Player : MonoBehaviour
 
         Thrusters();
 
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            _ammoCount += 50;
+            _uiManager.ChangeAmmoCount(_ammoCount, _maxAmmoCount);
+        }
+
     }
 
     

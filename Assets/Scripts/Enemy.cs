@@ -30,6 +30,7 @@ public class Enemy : MonoBehaviour
     //2 aggro
     //3 smart
     //4 fast
+    //5 boss
     public bool relocate = false;
     [SerializeField]
     private GameObject _parent;
@@ -58,6 +59,29 @@ public class Enemy : MonoBehaviour
     private GameObject _homingLaser;
     private float _playerY;
     private IEnumerator _fireHomingLaser;
+
+    private IEnumerator _fireLaserRoutine;
+    private IEnumerator _switchLasersRoutine;
+    public bool bossFight = false;
+    [SerializeField]
+    private Transform[] _laserPositions;
+    private bool _switchLasers = false;
+    private GameObject _tempLaser = null;
+    private bool _stopRaycast = false;
+
+
+    [SerializeField]
+    private float _maxBossHP = 50;
+    [SerializeField]
+    private float _bossHP;
+    private bool _inLaser = false;
+    private IEnumerator _inLaserRoutine;
+    public bool _explode = false;
+    public bool _onDeath = false;
+    private IEnumerator _explosions;
+    public bool sprayAttack = false;
+    private Vector3 rot;
+    private GameObject tempExplosion;
 
     private void Start()
     {
@@ -96,6 +120,12 @@ public class Enemy : MonoBehaviour
             StartCoroutine(FireLaser());
         }
        
+        if(_enemyID == 5)
+        {
+            StartCoroutine(BossAttack());
+            StartCoroutine(SwitchAttacks());
+            _bossHP = _maxBossHP;
+        }
         
 
         if(_uiManager == null)
@@ -179,6 +209,54 @@ public class Enemy : MonoBehaviour
                     _detection.transform.position = this.transform.position;
                 }
                 break;
+            case 5:
+                if (spawnLaser == true)
+                {
+                    if (_laserbeamCol == null)
+                    {
+                        _laserbeamCol = Instantiate(_laserbeamColPrefab, transform.position, Quaternion.identity);
+                    }
+                }
+                else if (spawnLaser == false)
+                {
+                    if (_laserbeamCol != null)
+                    {
+                        Destroy(_laserbeamCol);
+                    }
+                }  
+
+                if(bossFight == true)
+                {
+                    _fireLaser = true;
+
+                    if(_fireLaserRoutine == null)
+                    {
+                        _fireLaserRoutine = BossAttack();
+                        StartCoroutine(_fireLaserRoutine);
+                    }
+
+                    if (_switchLasersRoutine == null)
+                    {
+                        _switchLasersRoutine = SwitchAttacks();
+                        StartCoroutine(_switchLasersRoutine);
+                    }
+                }
+
+                if (_explode == true)
+                {
+                    _explode = false;
+
+                    if(tempExplosion == null)
+                    {
+                        tempExplosion = Instantiate(_explosion, this.transform.position, Quaternion.identity);
+                        tempExplosion.transform.localScale = new Vector3(2f, 2f);
+                        Destroy(tempExplosion, 2f);
+                        _explosionAudio.Play();
+                    }
+
+                    Destroy(this.gameObject, 1f);
+                }
+                break;
         }
 
         if(_stopRaycast == false)
@@ -186,10 +264,92 @@ public class Enemy : MonoBehaviour
             RayCastPowerup();
         }
         
+        
+
     }
 
-    private GameObject _tempLaser = null;
-    private bool _stopRaycast = false;
+    
+    
+    public IEnumerator SwitchAttacks()
+    {      
+        while(_fireLaser == true)
+        {
+            yield return new WaitForSeconds(10f);
+            _switchLasers = !_switchLasers;
+        }  
+    }
+
+
+    
+    IEnumerator BossAttack()
+    {
+        while (_fireLaser == true)
+        {
+            if (sprayAttack == true)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i == 0)
+                    {
+                        rot = new Vector3(0, 0, Random.Range(-50, -40));
+                    }
+                    else if (i == 1)
+                    {
+                        rot = new Vector3(0, 0, Random.Range(-10, 10));
+                    }
+                    else if (i == 2)
+                    {
+                        rot = new Vector3(0, 0, Random.Range(40, 50));
+                    }
+
+                    Vector3 pos = this.transform.position;
+                    Quaternion newRot = Quaternion.Euler(rot);
+                    GameObject laser = Instantiate(_laserPrefab, pos, newRot);
+                }
+
+                yield return new WaitForSeconds(Random.Range(.8f, 1f));
+            }
+            else
+            {
+                if (_switchLasers == false)
+                {
+                    int randomPos = Random.Range(0, _laserPositions.Length);
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        if (i == 1)
+                        {
+                            int newRandomPos = Random.Range(0, _laserPositions.Length);
+                            while (newRandomPos == randomPos)
+                            {
+                                newRandomPos = Random.Range(0, _laserPositions.Length);
+                            }
+                            randomPos = newRandomPos;
+                        }
+
+                        Vector3 pos = _laserPositions[randomPos].position;
+                        GameObject laser = Instantiate(_laserPrefab, pos, Quaternion.identity);
+                    }
+
+                    yield return new WaitForSeconds(1f);
+                }
+                else
+                {
+                    int randomPos = Random.Range(0, _laserPositions.Length);
+                    Vector3 pos = _laserPositions[randomPos].position;
+                    GameObject laser = Instantiate(_homingLaser, pos, Quaternion.identity);
+                    yield return new WaitForSeconds(1f);
+                }
+            }
+
+            
+            
+           
+        }
+    }
+
+
+
 
     public void RayCastPowerup()
     {
@@ -315,24 +475,145 @@ public class Enemy : MonoBehaviour
 
         while (_fireLaser == true)
         {        
-            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, transform.position.z), Quaternion.identity);
+            GameObject laser = Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
             yield return new WaitForSeconds(Random.Range(1f, 5f));
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Laserbeam")
+        {
+            if (other.GetComponent<Laser>().enemyLaser == true) return;
+            _inLaser = false;
+        }
+    }
+
+    private IEnumerator InLaser(GameObject laserPos)
+    {
+        while (_inLaser == true)
+        {
+            if (_bossHP > 0)
+            {
+                _bossHP -= 1;
+                _uiManager.ChangeBossHP(_bossHP, _maxBossHP);
+                
+                if (_bossHP == 17 || _bossHP == 32)
+                {
+                    _anim.SetTrigger("OnDamage");
+                }
+
+                if (laserPos != null)
+                {
+                    Vector3 newLaserPos = new Vector3(laserPos.transform.position.x, this.transform.position.y);
+                    GameObject explosion = Instantiate(_explosion, newLaserPos, Quaternion.identity);
+                    explosion.transform.localScale = new Vector3(.2f, .2f);
+                    Destroy(explosion, 2f);
+
+                    _explosionAudio.Play();
+                }                   
+            }
+            else if (_bossHP == 0)
+            {
+                //die
+                _onDeath = true;
+                _anim.SetTrigger("OnDeath");
+                if (_explosions == null)
+                {
+                    _explosions = Explosions();
+                    StartCoroutine(_explosions);
+                }
+            }
+            yield return new WaitForSeconds(.2f);
+        }
+    }
+
+    
+    private IEnumerator Explosions()
+    {
+        while(_onDeath == true)
+        {
+            if(_explode == false)
+            {
+                Vector3 explosionPos = new Vector3(this.transform.position.x + Random.Range(-2, 2), this.transform.position.y + Random.Range(-2, 2));
+                GameObject explosion = Instantiate(_explosion, explosionPos, Quaternion.identity);
+                explosion.transform.localScale = new Vector3(.3f, .3f);
+                Destroy(explosion, 2f);
+                _explosionAudio.Play();
+
+                yield return new WaitForSeconds(.5f);
+            }                  
+        }     
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag != "Laser" && other.gameObject.tag != "Player" && other.gameObject.tag != "Laserbeam") return;
 
+
         if(other.gameObject.tag == "Laser")
         {
             if (other.GetComponent<Laser>().enemyLaser == true) return;
+
+            //boss should only be able to get hit by player
+            if(_enemyID == 5)
+            {
+                if(_bossHP > 0)
+                {
+                    _bossHP -= 1;
+                    _uiManager.ChangeBossHP(_bossHP, _maxBossHP);
+
+                    if(_bossHP == 17 || _bossHP == 32)
+                    {
+                        _anim.SetTrigger("OnDamage");
+                    }
+
+                    GameObject explosion = Instantiate(_explosion, other.transform.position, Quaternion.identity);
+                    explosion.transform.localScale = new Vector3(.2f, .2f);
+                    Destroy(explosion, 2f);
+                    _explosionAudio.Play();
+
+                    Destroy(other.gameObject);
+
+                    return;
+                }
+                else if (_bossHP == 0)
+                {
+                    Destroy(other.gameObject);
+
+                    _onDeath = true;
+                    _anim.SetTrigger("OnDeath");
+                    if (_explosions == null)
+                    {
+                        _explosions = Explosions();
+                        StartCoroutine(_explosions);
+                    }
+
+                    return;
+                }
+
+            }
+
             Destroy(other.gameObject);
         }
 
         if (other.gameObject.tag == "Laserbeam")
-        {
+        {           
             if (other.GetComponent<Laser>().enemyLaser == true) return;
+            if (_enemyID == 5)
+            {
+                _inLaser = true;
+
+                if (_inLaserRoutine != null)
+                {
+                    StopCoroutine(_inLaserRoutine);
+                }
+
+                _inLaserRoutine = InLaser(other.gameObject);
+                StartCoroutine(_inLaserRoutine);
+
+                return;
+            }
         }
 
         if (other.gameObject.tag == "Player")
