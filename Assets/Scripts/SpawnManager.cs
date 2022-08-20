@@ -116,12 +116,12 @@ public class SpawnManager : MonoBehaviour
     {
         while(_startWave == true)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(20f);
             _spawnTime /= 1.2f;
             _waveNumber += 1;
             _uiManager.ChangeWaveCount(_waveNumber);
 
-            if(_waveNumber == 3)
+            if(_waveNumber == 5)
             {
                 _bossHere = true;
                 _boss.SetActive(true);

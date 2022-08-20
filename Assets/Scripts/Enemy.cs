@@ -91,7 +91,7 @@ public class Enemy : MonoBehaviour
         _player = FindObjectOfType<Player>();
         if (_player == null)
         {
-            Debug.LogError("player in null");
+            Debug.Log("player in null");
         }
 
         if (_enemyID == 1 || _enemyID == 2)

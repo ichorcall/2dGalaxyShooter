@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
             FireLaser();
         }
 
-        if(Input.GetKeyDown(KeyCode.R))
+        if(Input.GetKeyDown(KeyCode.I))
         {
             _homingLaser = true;
             _invincible = true;
